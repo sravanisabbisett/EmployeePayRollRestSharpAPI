@@ -67,5 +67,27 @@ namespace EmployeePayRollMsTestRestSharp
 
 
         }
+
+        [TestMethod]
+        public void GienMultipleEmployeeOnPost_ShouldReturnName()
+        {
+            List<Employee> employeeList = new List<Employee>();
+            employeeList.Add(new Employee { name = "Salaija", salary = "10000000" });
+            employeeList.Add(new Employee { name = "Badarinath", salary = "10000000" });
+            foreach(Employee employee in employeeList)
+            {
+                RestRequest request = new RestRequest("/employees", Method.POST);
+                JObject jObjectBody = new JObject();
+                jObjectBody.Add("name", employee.name);
+                jObjectBody.Add("salary", employee.salary);
+                request.AddParameter("application/json", jObjectBody, ParameterType.RequestBody);
+                //act
+                IRestResponse response = client.Execute(request);
+                Assert.AreEqual(response.StatusCode, HttpStatusCode.Created);
+                Employee dataResponse = JsonConvert.DeserializeObject<Employee>(response.Content);
+                Assert.AreEqual(employee.name,dataResponse.name);
+            }
+            
+        }
     }
 }
