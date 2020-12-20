@@ -110,5 +110,15 @@ namespace EmployeePayRollMsTestRestSharp
             Assert.AreEqual(dataResponse.salary, "500000");
 
         }
+
+        [TestMethod]
+        public void DeleteEmployee_InEmployeePayRoll()
+        {
+            //making a request for a particular employee to be deleted.
+            RestRequest request = new RestRequest("/employees/2",Method.DELETE);
+            IRestResponse response = client.Execute(request);
+            Assert.AreEqual(response.StatusCode,HttpStatusCode.OK);
+           
+        }
     }
 }
