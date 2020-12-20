@@ -37,7 +37,7 @@ namespace EmployeePayRollMsTestRestSharp
             IRestResponse response = getEmployeeList();
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
             List<Employee> dataResponse = JsonConvert.DeserializeObject<List<Employee>>(response.Content);
-            Assert.AreEqual(11, dataResponse.Count);
+            Assert.AreEqual(14, dataResponse.Count);
             foreach(Employee employee in dataResponse)
             {
                 Console.WriteLine("Id:" + employee.id + "\nName:" + employee.name + "\nSalary:" + employee.salary);
@@ -87,7 +87,28 @@ namespace EmployeePayRollMsTestRestSharp
                 Employee dataResponse = JsonConvert.DeserializeObject<Employee>(response.Content);
                 Assert.AreEqual(employee.name,dataResponse.name);
             }
-            
+        }
+
+        /// <summary>
+        /// Updates the employee should return upadted salary.
+        /// </summary>
+        [TestMethod]
+        public void UpdateTheEmployee_ShouldReturnUpadtedSalary()
+        {
+            //making a request for a particular employee to be updated
+            RestRequest request = new RestRequest("/employees/8", Method.PUT);
+            //creating a jobject for new data to be added in place of old
+            //json represents a new json object
+            JObject jObjectBody = new JObject();
+            jObjectBody.Add("name", "sravani");
+            jObjectBody.Add("salary", "500000");
+            request.AddParameter("application/json", jObjectBody, ParameterType.RequestBody);
+            //act
+            IRestResponse response = client.Execute(request);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+            Employee dataResponse = JsonConvert.DeserializeObject<Employee>(response.Content);
+            Assert.AreEqual(dataResponse.salary, "500000");
+
         }
     }
 }
