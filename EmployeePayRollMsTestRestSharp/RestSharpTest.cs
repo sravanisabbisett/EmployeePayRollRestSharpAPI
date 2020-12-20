@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,9 @@ namespace EmployeePayRollMsTestRestSharp
             return response;
         }
 
+        /// <summary>
+        ///It will return the no of employees in json file.
+        /// </summary>
         [TestMethod]
         public void OnCallingGet_ShouldReturnEmployeeList()
         {
@@ -38,6 +42,30 @@ namespace EmployeePayRollMsTestRestSharp
             {
                 Console.WriteLine("Id:" + employee.id + "\nName:" + employee.name + "\nSalary:" + employee.salary);
             }
+        }
+
+        /// <summary>
+        /// Givens the employee on post should return added employee.
+        /// </summary>
+        [TestMethod]
+        public void GivenEmployeeOnPost_ShouldReturnAddedEmployee()
+        {
+            //arrange
+            RestRequest request = new RestRequest("/employees", Method.POST);
+            JObject jObjectBody = new JObject();
+            jObjectBody.Add("name", "Lipica");
+            jObjectBody.Add("salary", "20000");
+            request.AddParameter("application/json", jObjectBody, ParameterType.RequestBody);
+            //act
+            IRestResponse response = client.Execute(request);
+            //assert
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.Created);
+            //deserialize the object employee
+            Employee dataResponse = JsonConvert.DeserializeObject<Employee>(response.Content);
+            Assert.AreEqual("Lipica", dataResponse.name);
+            Assert.AreEqual("20000", dataResponse.salary);
+
+
         }
     }
 }
